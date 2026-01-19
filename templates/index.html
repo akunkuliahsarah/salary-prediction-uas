@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salary Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-pink-100 flex items-center justify-center h-screen">
+
+    <div class="bg-purple-500 p-8 rounded-lg shadow-md w-96">
+        <h2 class="text-white text-2xl font-bold mb-4 text-center">Salary Prediction</h2>
+        
+        <form id="salaryForm">
+            <label class="block mb-2 text-white text-sm font-medium">Years Experience (0 - 50):</label>
+            <input type="number" id="experienceInput" step="0.1" min="0" max="50" required 
+                class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-yellow-300 outline-none">
+            
+            <button type="submit" class="w-full bg-pink-200 text-purple-700 py-2 rounded hover:bg-blue-500">
+                Prediction Now
+            </button>`
+        </form>
+
+        <div id="displayResult" class="mt-2 text-center font-semibold text-white font-bold text-center"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('salaryForm');
+        const resultDiv = document.getElementById('displayResult');
+
+        form.onsubmit = function(event) {
+            event.preventDefault(); 
+            
+            const years = document.getElementById('experienceInput').value;
+
+            fetch('http://localhost:8000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "YearsExperience": parseFloat(years) })
+            })
+            .then(response => response.json()) 
+            .then(data => {
+                resultDiv.innerText = "Salary Estimation: $" + data.PredictedSalary.toLocaleString();
+            })
+            .catch(error => {
+                resultDiv.innerText = "Gagal terhubung ke server!";
+                console.error("Error:", error);
+            });
+        };
+    </script>
+</body>
+</html>
